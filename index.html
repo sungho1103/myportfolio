@@ -1,252 +1,110 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>포트폴리오 허브</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
-          body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
-          html { scroll-behavior: smooth; }
-          .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
-          .fade-in.visible { opacity: 1; transform: translateY(0); }
-        </style>
-  </head>
-  <body class="bg-white text-neutral-900">
-
-      <!-- Hero Section -->
-      <section class="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-24 relative">
-            <div class="max-w-3xl">
-                    <p class="text-sm tracking-widest text-neutral-400 mb-4">WEB DEVELOPER</p>p>
-                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-light text-neutral-900 leading-tight mb-6">
-                              안녕하세요,<br>
-                              <span class="font-medium">권성호</span>span>입니다.
-                    </h1>h1>
-                    <p class="text-lg md:text-xl text-neutral-500 font-light leading-relaxed max-w-xl mb-12">
-                              사용자 경험을 중시하는 웹 애플리케이션을 만듭니다. 깔끔한 코드와 직관적인 인터페이스를 추구합니다.
-                    </p>p>
-            </div>div>
-            <button onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})"
-                    class="absolute bottom-12 left-1/2 -translate-x-1/2 text-neutral-300 hover:text-neutral-900 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
-                    </svg>svg>
-            </button>button>
-      </section>section>
-
-      <!-- Projects Section -->
-      <section id="projects" class="py-24 px-6 md:px-12 lg:px-24">
-            <div class="mb-16 fade-in">
-                    <p class="text-sm tracking-widest text-neutral-400 mb-2">SELECTED WORK</p>p>
-                    <h2 class="text-3xl md:text-4xl font-light text-neutral-900">프로젝트</h2>h2>
-            </div>div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
-
-                    <!-- Project 1 -->
-                    <article class="group fade-in">
-                              <div class="aspect-video bg-neutral-100 overflow-hidden mb-6">
-                                          <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&q=80"
-                                                        alt="E-Commerce Platform"
-                                                        class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
-                              </div>div>
-                              <div class="flex items-start justify-between gap-4">
-                                          <div class="flex-1">
-                                                        <div class="flex items-center gap-3 mb-2">
-                                                                        <h3 class="text-lg font-medium text-neutral-900">E-Commerce Platform</h3>h3>
-                                                                        <span class="text-xs text-neutral-400">2025</span>span>
-                                                        </div>div>
-                                                        <p class="text-sm text-neutral-500 leading-relaxed mb-4">React와 Node.js를 사용한 풀스택 쇼핑몰 플랫폼. 결제 시스템 연동 및 실시간 재고 관리 기능 구현.</p>p>
-                                                        <div class="flex flex-wrap gap-2">
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">React</span>span>
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Node.js</span>span>
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">MongoDB</span>span>
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Stripe</span>span>
-                                                        </div>div>
-                                          </div>div>
-                                          <div class="flex items-center gap-2">
-                                                        <a href="https://github.com" class="p-2 text-neutral-400 hover:text-neutral-900 transition-colors" title="GitHub">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                                                                                          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.69.82.57C20.56 21.79 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
-                                                                        </svg>svg>
-                                                        </a>a>
-                                                        <a href="https://example.com" class="p-2 text-neutral-400 hover:text-neutral-900 transition-colors" title="Live">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                                                                          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
-                                                                        </svg>svg>
-                                                        </a>a>
-                                          </div>div>
-                              </div>div>
-                    </article>article>
-
-                    <!-- Project 2 -->
-                    <article class="group fade-in">
-                              <div class="aspect-video bg-neutral-100 overflow-hidden mb-6">
-                                          <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=800&q=80"
-                                                        alt="Task Management App"
-                                                        class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
-                              </div>div>
-                              <div class="flex items-start justify-between gap-4">
-                                          <div class="flex-1">
-                                                        <div class="flex items-center gap-3 mb-2">
-                                                                        <h3 class="text-lg font-medium text-neutral-900">Task Management App</h3>h3>
-                                                                        <span class="text-xs text-neutral-400">2024</span>span>
-                                                        </div>div>
-                                                        <p class="text-sm text-neutral-500 leading-relaxed mb-4">팀 협업을 위한 칸반 보드 기반 태스크 관리 애플리케이션. 실시간 동기화 및 알림 기능.</p>p>
-                                                        <div class="flex flex-wrap gap-2">
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Next.js</span>span>
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">TypeScript</span>span>
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">PostgreSQL</span>span>
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">WebSocket</span>span>
-                                                        </div>div>
-                                          </div>div>
-                                          <div class="flex items-center gap-2">
-                                                        <a href="https://github.com" class="p-2 text-neutral-400 hover:text-neutral-900 transition-colors" title="GitHub">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                                                                                          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.69.82.57C20.56 21.79 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
-                                                                        </svg>svg>
-                                                        </a>a>
-                                                        <a href="https://example.com" class="p-2 text-neutral-400 hover:text-neutral-900 transition-colors" title="Live">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                                                                          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
-                                                                        </svg>svg>
-                                                        </a>a>
-                                          </div>div>
-                              </div>div>
-                    </article>article>
-
-                    <!-- Project 3 -->
-                    <article class="group fade-in">
-                              <div class="aspect-video bg-neutral-100 overflow-hidden mb-6">
-                                          <img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=80"
-                                                        alt="Portfolio Generator"
-                                                        class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
-                              </div>div>
-                              <div class="flex items-start justify-between gap-4">
-                                          <div class="flex-1">
-                                                        <div class="flex items-center gap-3 mb-2">
-                                                                        <h3 class="text-lg font-medium text-neutral-900">Portfolio Generator</h3>h3>
-                                                                        <span class="text-xs text-neutral-400">2024</span>span>
-                                                        </div>div>
-                                                        <p class="text-sm text-neutral-500 leading-relaxed mb-4">개발자를 위한 포트폴리오 웹사이트 자동 생성 서비스. 마크다운 기반의 콘텐츠 관리.</p>p>
-                                                        <div class="flex flex-wrap gap-2">
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">React</span>span>
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Tailwind CSS</span>span>
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Firebase</span>span>
-                                                        </div>div>
-                                          </div>div>
-                                          <div class="flex items-center gap-2">
-                                                        <a href="https://github.com" class="p-2 text-neutral-400 hover:text-neutral-900 transition-colors" title="GitHub">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                                                                                          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.69.82.57C20.56 21.79 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
-                                                                        </svg>svg>
-                                                        </a>a>
-                                          </div>div>
-                              </div>div>
-                    </article>article>
-
-                    <!-- Project 4 -->
-                    <article class="group fade-in">
-                              <div class="aspect-video bg-neutral-100 overflow-hidden mb-6">
-                                          <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&q=80"
-                                                        alt="Weather Dashboard"
-                                                        class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
-                              </div>div>
-                              <div class="flex items-start justify-between gap-4">
-                                          <div class="flex-1">
-                                                        <div class="flex items-center gap-3 mb-2">
-                                                                        <h3 class="text-lg font-medium text-neutral-900">Weather Dashboard</h3>h3>
-                                                                        <span class="text-xs text-neutral-400">2023</span>span>
-                                                        </div>div>
-                                                        <p class="text-sm text-neutral-500 leading-relaxed mb-4">OpenWeather API를 활용한 날씨 대시보드. 위치 기반 예보 및 데이터 시각화.</p>p>
-                                                        <div class="flex flex-wrap gap-2">
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Vue.js</span>span>
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Chart.js</span>span>
-                                                                        <span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">REST API</span>span>
-                                                        </div>div>
-                                          </div>div>
-                                          <div class="flex items-center gap-2">
-                                                        <a href="https://example.com" class="p-2 text-neutral-400 hover:text-neutral-900 transition-colors" title="Live">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                                                                          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
-                                                                        </svg>svg>
-                                                        </a>a>
-                                          </div>div>
-                              </div>div>
-                    </article>article>
-
-            </div>div>
-      </section>section>
-
-      <!-- Tech Stack Section -->
-      <section class="py-24 px-6 md:px-12 lg:px-24 bg-neutral-50">
-            <div class="mb-16 fade-in">
-                    <p class="text-sm tracking-widest text-neutral-400 mb-2">TECH STACK</p>p>
-                    <h2 class="text-3xl md:text-4xl font-light text-neutral-900">기술 스택</h2>h2>
-            </div>div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                    <div class="fade-in">
-                              <h3 class="text-sm tracking-widest text-neutral-400 mb-6">FRONTEND</h3>h3>
-                              <ul class="space-y-3">
-                                          <li class="text-lg text-neutral-700 font-light">React</li>li>
-                                          <li class="text-lg text-neutral-700 font-light">Next.js</li>li>
-                                          <li class="text-lg text-neutral-700 font-light">TypeScript</li>li>
-                                          <li class="text-lg text-neutral-700 font-light">Tailwind CSS</li>li>
-                              </ul>ul>
-                    </div>div>
-                    <div class="fade-in">
-                              <h3 class="text-sm tracking-widest text-neutral-400 mb-6">BACKEND</h3>h3>
-                              <ul class="space-y-3">
-                                          <li class="text-lg text-neutral-700 font-light">Node.js</li>li>
-                                          <li class="text-lg text-neutral-700 font-light">Python</li>li>
-                                          <li class="text-lg text-neutral-700 font-light">PostgreSQL</li>li>
-                                          <li class="text-lg text-neutral-700 font-light">MongoDB</li>li>
-                              </ul>ul>
-                    </div>div>
-                    <div class="fade-in">
-                              <h3 class="text-sm tracking-widest text-neutral-400 mb-6">TOOLS</h3>h3>
-                              <ul class="space-y-3">
-                                          <li class="text-lg text-neutral-700 font-light">Git</li>li>
-                                          <li class="text-lg text-neutral-700 font-light">Figma</li>li>
-                                          <li class="text-lg text-neutral-700 font-light">Docker</li>li>
-                                          <li class="text-lg text-neutral-700 font-light">AWS</li>li>
-                              </ul>ul>
-                    </div>div>
-            </div>div>
-      </section>section>
-
-      <!-- Contact Section -->
-      <section class="py-24 px-6 md:px-12 lg:px-24">
-            <div class="max-w-2xl fade-in">
-                    <p class="text-sm tracking-widest text-neutral-400 mb-2">CONTACT</p>p>
-                    <h2 class="text-3xl md:text-4xl font-light text-neutral-900 mb-8">함께 일해요</h2>h2>
-                    <p class="text-lg text-neutral-500 font-light leading-relaxed mb-12">새로운 프로젝트나 협업에 관심이 있으시다면 언제든지 연락 주세요.</p>p>
-            </div>div>
-      </section>section>
-
-      <!-- Footer -->
-      <footer class="py-8 px-6 md:px-12 lg:px-24 border-t border-neutral-100">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p class="text-xs text-neutral-400">© 2026 All rights reserved.</p>p>
-                    <p class="text-xs text-neutral-300">Designed &amp; Developed with care.</p>p>
-            </div>div>
-      </footer>footer>
-
-      <script>
-            // Fade-in on scroll animation
-            const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                              if (entry.isIntersecting) {
-                                          entry.target.classList.add('visible');
-                              }
-                    });
-            }, { threshold: 0.1 });
-
-            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-      </script>
-
-  </body>body>
-</html>html>
-      </script>
-    </style></title>
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>포트폴리오 허브</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+    body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+    html { scroll-behavior: smooth; }
+    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body class="bg-white text-neutral-900">
+  <section class="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-24 relative">
+    <div class="max-w-3xl">
+      <p class="text-sm tracking-widest text-neutral-400 mb-4">WEB DEVELOPER</p>
+      <h1 class="text-4xl md:text-6xl lg:text-7xl font-light text-neutral-900 leading-tight mb-6">안녕하세요,<br><span class="font-medium">권성호</span>입니다.</h1>
+      <p class="text-lg md:text-xl text-neutral-500 font-light leading-relaxed max-w-xl mb-12">사용자 경험을 중시하는 웹 애플리케이션을 만듭니다. 깔끔한 코드와 직관적인 인터페이스를 추구합니다.</p>
+    </div>
+    <button onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})" class="absolute bottom-12 left-1/2 -translate-x-1/2 text-neutral-300 hover:text-neutral-900 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+    </button>
+  </section>
+  <section id="projects" class="py-24 px-6 md:px-12 lg:px-24">
+    <div class="mb-16 fade-in">
+      <p class="text-sm tracking-widest text-neutral-400 mb-2">SELECTED WORK</p>
+      <h2 class="text-3xl md:text-4xl font-light text-neutral-900">프로젝트</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
+      <article class="group fade-in">
+        <div class="aspect-video bg-neutral-100 overflow-hidden mb-6"><img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&q=80" alt="E-Commerce Platform" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"></div>
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2"><h3 class="text-lg font-medium text-neutral-900">E-Commerce Platform</h3><span class="text-xs text-neutral-400">2025</span></div>
+            <p class="text-sm text-neutral-500 leading-relaxed mb-4">React와 Node.js를 사용한 풀스택 쇼핑몰 플랫폼. 결제 시스템 연동 및 실시간 재고 관리 기능 구현.</p>
+            <div class="flex flex-wrap gap-2"><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">React</span><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Node.js</span><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">MongoDB</span><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Stripe</span></div>
+          </div>
+          <div class="flex items-center gap-2"><a href="https://github.com" class="p-2 text-neutral-400 hover:text-neutral-900 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.69.82.57C20.56 21.79 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg></a><a href="https://example.com" class="p-2 text-neutral-400 hover:text-neutral-900 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg></a></div>
+        </div>
+      </article>
+      <article class="group fade-in">
+        <div class="aspect-video bg-neutral-100 overflow-hidden mb-6"><img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=800&q=80" alt="Task Management App" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"></div>
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2"><h3 class="text-lg font-medium text-neutral-900">Task Management App</h3><span class="text-xs text-neutral-400">2024</span></div>
+            <p class="text-sm text-neutral-500 leading-relaxed mb-4">팀 협업을 위한 칸반 보드 기반 태스크 관리 애플리케이션. 실시간 동기화 및 알림 기능.</p>
+            <div class="flex flex-wrap gap-2"><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Next.js</span><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">TypeScript</span><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">PostgreSQL</span><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">WebSocket</span></div>
+          </div>
+          <div class="flex items-center gap-2"><a href="https://github.com" class="p-2 text-neutral-400 hover:text-neutral-900 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.69.82.57C20.56 21.79 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg></a><a href="https://example.com" class="p-2 text-neutral-400 hover:text-neutral-900 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg></a></div>
+        </div>
+      </article>
+      <article class="group fade-in">
+        <div class="aspect-video bg-neutral-100 overflow-hidden mb-6"><img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=80" alt="Portfolio Generator" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"></div>
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2"><h3 class="text-lg font-medium text-neutral-900">Portfolio Generator</h3><span class="text-xs text-neutral-400">2024</span></div>
+            <p class="text-sm text-neutral-500 leading-relaxed mb-4">개발자를 위한 포트폴리오 웹사이트 자동 생성 서비스. 마크다운 기반의 콘텐츠 관리.</p>
+            <div class="flex flex-wrap gap-2"><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">React</span><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Tailwind CSS</span><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Firebase</span></div>
+          </div>
+          <div class="flex items-center gap-2"><a href="https://github.com" class="p-2 text-neutral-400 hover:text-neutral-900 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.69.82.57C20.56 21.79 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg></a></div>
+        </div>
+      </article>
+      <article class="group fade-in">
+        <div class="aspect-video bg-neutral-100 overflow-hidden mb-6"><img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&q=80" alt="Weather Dashboard" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"></div>
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2"><h3 class="text-lg font-medium text-neutral-900">Weather Dashboard</h3><span class="text-xs text-neutral-400">2023</span></div>
+            <p class="text-sm text-neutral-500 leading-relaxed mb-4">OpenWeather API를 활용한 날씨 대시보드. 위치 기반 예보 및 데이터 시각화.</p>
+            <div class="flex flex-wrap gap-2"><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Vue.js</span><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">Chart.js</span><span class="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">REST API</span></div>
+          </div>
+          <div class="flex items-center gap-2"><a href="https://example.com" class="p-2 text-neutral-400 hover:text-neutral-900 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg></a></div>
+        </div>
+      </article>
+    </div>
+  </section>
+  <section class="py-24 px-6 md:px-12 lg:px-24 bg-neutral-50">
+    <div class="mb-16 fade-in">
+      <p class="text-sm tracking-widest text-neutral-400 mb-2">TECH STACK</p>
+      <h2 class="text-3xl md:text-4xl font-light text-neutral-900">기술 스택</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div class="fade-in"><h3 class="text-sm tracking-widest text-neutral-400 mb-6">FRONTEND</h3><ul class="space-y-3"><li class="text-lg text-neutral-700 font-light">React</li><li class="text-lg text-neutral-700 font-light">Next.js</li><li class="text-lg text-neutral-700 font-light">TypeScript</li><li class="text-lg text-neutral-700 font-light">Tailwind CSS</li></ul></div>
+      <div class="fade-in"><h3 class="text-sm tracking-widest text-neutral-400 mb-6">BACKEND</h3><ul class="space-y-3"><li class="text-lg text-neutral-700 font-light">Node.js</li><li class="text-lg text-neutral-700 font-light">Python</li><li class="text-lg text-neutral-700 font-light">PostgreSQL</li><li class="text-lg text-neutral-700 font-light">MongoDB</li></ul></div>
+      <div class="fade-in"><h3 class="text-sm tracking-widest text-neutral-400 mb-6">TOOLS</h3><ul class="space-y-3"><li class="text-lg text-neutral-700 font-light">Git</li><li class="text-lg text-neutral-700 font-light">Figma</li><li class="text-lg text-neutral-700 font-light">Docker</li><li class="text-lg text-neutral-700 font-light">AWS</li></ul></div>
+    </div>
+  </section>
+  <section class="py-24 px-6 md:px-12 lg:px-24">
+    <div class="max-w-2xl fade-in">
+      <p class="text-sm tracking-widest text-neutral-400 mb-2">CONTACT</p>
+      <h2 class="text-3xl md:text-4xl font-light text-neutral-900 mb-8">함께 일해요</h2>
+      <p class="text-lg text-neutral-500 font-light leading-relaxed mb-12">새로운 프로젝트나 협업에 관심이 있으시다면 언제든지 연락 주세요.</p>
+    </div>
+  </section>
+  <footer class="py-8 px-6 md:px-12 lg:px-24 border-t border-neutral-100">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-xs text-neutral-400">&copy; 2026 All rights reserved.</p>
+      <p class="text-xs text-neutral-300">Designed &amp; Developed with care.</p>
+    </div>
+  </footer>
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
