@@ -130,8 +130,8 @@
                 </div>
 
                 <div id="image-upload-fields" class="hidden">
-                  <input id="image-file" name="imageFile" type="file" accept="image/*" class="block w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 text-sm text-neutral-300 file:mr-4 file:rounded-full file:border-0 file:bg-cyan-300 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-neutral-950 hover:file:bg-cyan-200">
-                  <p class="mt-2 text-xs text-neutral-500">작은 용량 이미지를 권장합니다. 업로드 이미지는 Firestore 문서에 함께 저장됩니다.</p>
+                  <input id="image-file" name="imageFile" type="file" accept="image/*" multiple class="block w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 text-sm text-neutral-300 file:mr-4 file:rounded-full file:border-0 file:bg-cyan-300 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-neutral-950 hover:file:bg-cyan-200">
+                  <p class="mt-2 text-xs text-neutral-500">최대 5장까지 업로드할 수 있습니다. 업로드 이미지는 Firestore 문서에 함께 저장됩니다.</p>
                 </div>
 
                 <div id="image-website-fields" class="hidden rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 text-sm text-neutral-300">
@@ -148,6 +148,7 @@
                     <img id="image-preview" alt="프로젝트 이미지 미리보기" class="hidden h-full w-full rounded-2xl border border-white/10 object-cover shadow-[0_16px_40px_-24px_rgba(0,0,0,0.7)] ring-1 ring-black/10">
                     <p id="image-preview-empty" class="px-6 text-center text-sm text-neutral-500">이미지 URL을 넣거나 파일을 업로드하거나 웹사이트 첫 화면 모드를 선택하세요.</p>
                   </div>
+                  <div id="image-preview-strip" class="hidden gap-2 border-t border-white/10 px-4 py-3"></div>
                 </div>
               </div>
             </div>

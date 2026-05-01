@@ -16,6 +16,11 @@ const projectList = document.getElementById("project-list");
 const projectStatus = document.getElementById("project-status");
 const connectionBadge = document.getElementById("connection-badge");
 
+function getProjectImages(project) {
+  const images = Array.isArray(project.image_urls) ? project.image_urls : [project.image_url];
+  return images.map((value) => String(value || "").trim()).filter(Boolean);
+}
+
 function getProjectPrimaryUrl(project) {
   return project.live_url || project.github_url || "";
 }
@@ -45,16 +50,40 @@ function renderProjectActions(project) {
 function renderProjectCard(project) {
   const tags = project.tags.map((tag) => `<span class="border border-neutral-200 px-2 py-1 text-xs text-neutral-400">${tag}</span>`).join("");
   const popupUrl = getProjectPrimaryUrl(project);
+  const images = getProjectImages(project);
+  const hasCarousel = images.length > 1;
   const clickableClass = popupUrl
     ? "cursor-pointer transition-transform duration-300 hover:-translate-y-1"
     : "";
   const popupAttr = popupUrl ? `data-popup-url="${popupUrl}"` : "";
+  const slides = images.map((src, index) => `
+    <img
+      src="${src}"
+      alt="${project.image_alt}${images.length > 1 ? ` ${index + 1}` : ""}"
+      class="h-full min-w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
+    >
+  `).join("");
 
   return `
     <article class="group fade-in ${clickableClass}" ${popupAttr}>
       <div class="mb-6 rounded-[1.75rem] border border-neutral-200 bg-neutral-100 p-3 shadow-[0_20px_50px_-30px_rgba(15,23,42,0.35)]">
-        <div class="aspect-video overflow-hidden rounded-[1.1rem] bg-[linear-gradient(135deg,#f5f5f5_0%,#e5e5e5_100%)] ring-1 ring-black/5">
-          <img src="${project.image_url}" alt="${project.image_alt}" class="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0">
+        <div class="relative aspect-video overflow-hidden rounded-[1.1rem] bg-[linear-gradient(135deg,#f5f5f5_0%,#e5e5e5_100%)] ring-1 ring-black/5" data-carousel data-image-count="${images.length}" data-image-index="0">
+          <div class="flex h-full transition-transform duration-300 ease-out" data-carousel-track>
+            ${slides}
+          </div>
+          ${hasCarousel ? `
+            <button type="button" data-carousel-prev class="absolute left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-neutral-800 shadow-sm transition hover:bg-white" aria-label="${project.title} 이전 이미지">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button type="button" data-carousel-next class="absolute right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-neutral-800 shadow-sm transition hover:bg-white" aria-label="${project.title} 다음 이미지">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6"/></svg>
+            </button>
+            <div class="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-1.5 rounded-full bg-black/45 px-2 py-1">
+              ${images.map((_, index) => `
+                <span class="h-1.5 w-1.5 rounded-full ${index === 0 ? "bg-white" : "bg-white/35"}" data-carousel-dot="${index}"></span>
+              `).join("")}
+            </div>
+          ` : ""}
         </div>
       </div>
       <div class="flex items-start justify-between gap-4">
@@ -111,6 +140,21 @@ function openProjectPopup(url) {
   window.open(url, "_blank", features);
 }
 
+function updateCarousel(card, nextIndex) {
+  const carousel = card.querySelector("[data-carousel]");
+  const track = card.querySelector("[data-carousel-track]");
+  const imageCount = Number(carousel?.dataset.imageCount || 0);
+  if (!carousel || !track || imageCount <= 1) return;
+
+  const normalizedIndex = (nextIndex + imageCount) % imageCount;
+  carousel.dataset.imageIndex = String(normalizedIndex);
+  track.style.transform = `translateX(-${normalizedIndex * 100}%)`;
+
+  card.querySelectorAll("[data-carousel-dot]").forEach((dot, index) => {
+    dot.className = `h-1.5 w-1.5 rounded-full ${index === normalizedIndex ? "bg-white" : "bg-white/35"}`;
+  });
+}
+
 async function renderProjects() {
   const { data, fallback, error } = await listPublishedProjects();
   updateConnectionBadge(fallback);
@@ -137,6 +181,26 @@ async function renderProjects() {
 }
 
 projectList.addEventListener("click", (event) => {
+  const previousButton = event.target.closest("[data-carousel-prev]");
+  if (previousButton) {
+    event.stopPropagation();
+    const card = previousButton.closest("[data-popup-url], article");
+    const carousel = card?.querySelector("[data-carousel]");
+    const currentIndex = Number(carousel?.dataset.imageIndex || 0);
+    if (card) updateCarousel(card, currentIndex - 1);
+    return;
+  }
+
+  const nextButton = event.target.closest("[data-carousel-next]");
+  if (nextButton) {
+    event.stopPropagation();
+    const card = nextButton.closest("[data-popup-url], article");
+    const carousel = card?.querySelector("[data-carousel]");
+    const currentIndex = Number(carousel?.dataset.imageIndex || 0);
+    if (card) updateCarousel(card, currentIndex + 1);
+    return;
+  }
+
   if (event.target.closest("a")) return;
 
   const card = event.target.closest("[data-popup-url]");

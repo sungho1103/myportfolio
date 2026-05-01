@@ -35,6 +35,7 @@ const websiteImageFields = document.getElementById("image-website-fields");
 const imagePreview = document.getElementById("image-preview");
 const imagePreviewEmpty = document.getElementById("image-preview-empty");
 const imagePreviewLabel = document.getElementById("image-preview-label");
+const imagePreviewStrip = document.getElementById("image-preview-strip");
 const ADMIN_SESSION_KEY = "portfolio_admin_session_expires_at";
 const ADMIN_SESSION_DURATION_MS = 10 * 60 * 1000;
 
@@ -42,7 +43,7 @@ let projects = [];
 let editingProjectId = null;
 let currentUser = null;
 let currentUserIsAdmin = false;
-let uploadedImageDataUrl = "";
+let uploadedImageDataUrls = [];
 let adminSessionTimerId = 0;
 let sessionExpiredNotice = false;
 
@@ -175,6 +176,22 @@ function setImagePreview(src, label) {
   imagePreviewLabel.textContent = label;
 }
 
+function setImagePreviewStrip(images) {
+  if (!images.length) {
+    imagePreviewStrip.innerHTML = "";
+    imagePreviewStrip.classList.add("hidden");
+    return;
+  }
+
+  imagePreviewStrip.innerHTML = images.map((src, index) => `
+    <div class="h-12 w-16 overflow-hidden rounded-xl border border-white/10 bg-[linear-gradient(135deg,rgba(250,250,250,0.14)_0%,rgba(212,212,212,0.08)_100%)] p-1">
+      <img src="${src}" alt="미리보기 썸네일 ${index + 1}" class="h-full w-full rounded-lg object-cover ring-1 ring-black/10">
+    </div>
+  `).join("");
+  imagePreviewStrip.classList.remove("hidden");
+  imagePreviewStrip.classList.add("flex");
+}
+
 function updateImageModeUI() {
   const mode = getImageMode();
   manualImageFields.classList.toggle("hidden", mode !== "manual");
@@ -188,20 +205,25 @@ function syncImagePreviewFromForm() {
 
   if (mode === "manual") {
     setImagePreview(imageField.value.trim(), imageField.value.trim() ? "이미지 URL 미리보기" : "선택 안 됨");
+    setImagePreviewStrip(imageField.value.trim() ? [imageField.value.trim()] : []);
     return;
   }
 
   if (mode === "upload") {
-    setImagePreview(uploadedImageDataUrl, uploadedImageDataUrl ? "업로드 이미지 미리보기" : "선택 안 됨");
+    setImagePreview(uploadedImageDataUrls[0] || "", uploadedImageDataUrls.length ? `업로드 이미지 ${uploadedImageDataUrls.length}장` : "선택 안 됨");
+    setImagePreviewStrip(uploadedImageDataUrls);
     return;
   }
 
   if (!liveUrl) {
     setImagePreview("", "서비스 URL 필요");
+    setImagePreviewStrip([]);
     return;
   }
 
-  setImagePreview(generateWebsitePreviewUrl(liveUrl), "웹사이트 첫 화면 미리보기");
+  const websiteImage = generateWebsitePreviewUrl(liveUrl);
+  setImagePreview(websiteImage, "웹사이트 첫 화면 미리보기");
+  setImagePreviewStrip([websiteImage]);
 }
 
 function inferImageMode(project) {
@@ -216,11 +238,12 @@ function buildImagePayload(formData, title) {
   const liveUrl = String(formData.get("liveUrl") || "").trim();
 
   if (mode === "upload") {
-    if (!uploadedImageDataUrl) {
+    if (!uploadedImageDataUrls.length) {
       throw new Error("업로드한 이미지를 먼저 선택하세요.");
     }
     return {
-      image_url: uploadedImageDataUrl,
+      image_url: uploadedImageDataUrls[0],
+      image_urls: uploadedImageDataUrls,
       image_source: "upload",
       image_alt: String(formData.get("alt") || "").trim() || title
     };
@@ -230,8 +253,10 @@ function buildImagePayload(formData, title) {
     if (!liveUrl) {
       throw new Error("웹사이트 첫 화면을 쓰려면 서비스 URL을 입력하세요.");
     }
+    const websiteImage = generateWebsitePreviewUrl(liveUrl);
     return {
-      image_url: generateWebsitePreviewUrl(liveUrl),
+      image_url: websiteImage,
+      image_urls: [websiteImage],
       image_source: "website",
       image_alt: String(formData.get("alt") || "").trim() || `${title} 웹사이트 첫 화면`
     };
@@ -244,6 +269,7 @@ function buildImagePayload(formData, title) {
 
   return {
     image_url: imageUrl,
+    image_urls: [imageUrl],
     image_source: "manual",
     image_alt: String(formData.get("alt") || "").trim() || title
   };
@@ -275,7 +301,8 @@ function resetForm() {
   form.reset();
   form.published.checked = true;
   form.displayOrder.value = 0;
-  uploadedImageDataUrl = "";
+  uploadedImageDataUrls = [];
+  imageFileField.value = "";
   imageModeInputs.find((input) => input.value === "manual").checked = true;
   editingProjectId = null;
   formMode.textContent = "새 프로젝트 추가";
@@ -295,7 +322,10 @@ function editProject(projectId) {
   form.alt.value = project.image_alt || "";
   form.description.value = project.description;
   form.image.value = project.image_url;
-  uploadedImageDataUrl = project.image_source === "upload" ? project.image_url : "";
+  uploadedImageDataUrls = project.image_source === "upload"
+    ? (Array.isArray(project.image_urls) && project.image_urls.length ? project.image_urls : [project.image_url]).filter(Boolean)
+    : [];
+  imageFileField.value = "";
   form.tags.value = project.tags.join(", ");
   form.githubUrl.value = project.github_url || "";
   form.liveUrl.value = project.live_url || "";
@@ -539,21 +569,23 @@ imageField.addEventListener("input", syncImagePreviewFromForm);
 form.liveUrl.addEventListener("input", syncImagePreviewFromForm);
 
 imageFileField.addEventListener("change", async () => {
-  const [file] = Array.from(imageFileField.files || []);
-  if (!file) {
-    uploadedImageDataUrl = "";
+  const files = Array.from(imageFileField.files || []).slice(0, 5);
+  if (!files.length) {
+    uploadedImageDataUrls = [];
     syncImagePreviewFromForm();
     return;
   }
 
-  const dataUrl = await new Promise((resolve, reject) => {
+  if (files.length !== Array.from(imageFileField.files || []).length) {
+    window.alert("이미지는 최대 5장까지 업로드할 수 있습니다. 앞의 5장만 사용합니다.");
+  }
+
+  uploadedImageDataUrls = await Promise.all(files.map((file) => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result || ""));
     reader.onerror = () => reject(new Error("이미지 파일을 읽지 못했습니다."));
     reader.readAsDataURL(file);
-  });
-
-  uploadedImageDataUrl = dataUrl;
+  })));
   syncImagePreviewFromForm();
 });
 
