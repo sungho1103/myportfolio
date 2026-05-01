@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>제작 의뢰서 | 포트폴리오 허브</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+    input, textarea, select { outline: none; }
+  </style>
+</head>
+<body class="bg-neutral-50 text-neutral-900">
+  <header class="border-b border-neutral-100 bg-white px-6 py-4 md:px-12 lg:px-24">
+    <div class="mx-auto flex max-w-5xl items-center justify-between">
+      <a href="./index.html" class="text-sm text-neutral-500 transition hover:text-neutral-900">← 홈으로</a>
+      <a href="https://open.kakao.com/o/skzHmYsi" target="_blank" rel="noopener noreferrer" class="rounded-full bg-[#FEE500] px-4 py-2 text-sm font-semibold text-neutral-900 shadow-sm transition hover:shadow-md">카카오톡 문의</a>
+    </div>
+  </header>
+
+  <main class="px-6 py-12 md:px-12 lg:px-24">
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-10 rounded-3xl bg-white p-8 shadow-sm md:p-12">
+        <p class="mb-3 text-sm font-medium tracking-widest text-neutral-400">PROJECT REQUEST</p>
+        <h1 class="mb-4 text-3xl font-light md:text-5xl">제작 의뢰서</h1>
+        <p class="max-w-2xl text-neutral-500">아래 내용을 작성한 뒤 <strong class="font-semibold text-neutral-800">의뢰서 발송</strong>을 누르면 작성 내용이 자동 정리되어 복사되고, 카카오톡 문의방이 열립니다. 카카오톡 입력창에 붙여넣어 보내주세요.</p>
+      </div>
+
+      <form id="requestForm" class="space-y-8">
+        <section class="rounded-3xl bg-white p-6 shadow-sm md:p-8">
+          <h2 class="mb-6 text-xl font-semibold">1. 기본 정보</h2>
+          <div class="grid gap-5 md:grid-cols-2">
+            <label class="block"><span class="mb-2 block text-sm text-neutral-500">업체명 / 프로젝트명</span><input name="projectName" class="w-full rounded-2xl border border-neutral-200 px-4 py-3" placeholder="예: 희망은교회 홈페이지"></label>
+            <label class="block"><span class="mb-2 block text-sm text-neutral-500">담당자 이름</span><input name="managerName" class="w-full rounded-2xl border border-neutral-200 px-4 py-3" placeholder="예: 권성호"></label>
+            <label class="block"><span class="mb-2 block text-sm text-neutral-500">연락처</span><input name="phone" class="w-full rounded-2xl border border-neutral-200 px-4 py-3" placeholder="예: 010-0000-0000"></label>
+            <label class="block"><span class="mb-2 block text-sm text-neutral-500">이메일</span><input name="email" type="email" class="w-full rounded-2xl border border-neutral-200 px-4 py-3" placeholder="example@email.com"></label>
+          </div>
+        </section>
+
+        <section class="rounded-3xl bg-white p-6 shadow-sm md:p-8">
+          <h2 class="mb-6 text-xl font-semibold">2. 프로젝트 목적</h2>
+          <div class="grid gap-3 md:grid-cols-3">
+            <label class="rounded-2xl border border-neutral-200 p-4"><input type="checkbox" name="purpose" value="홍보"> 홍보</label>
+            <label class="rounded-2xl border border-neutral-200 p-4"><input type="checkbox" name="purpose" value="예약/신청"> 예약/신청</label>
+            <label class="rounded-2xl border border-neutral-200 p-4"><input type="checkbox" name="purpose" value="판매/주문"> 판매/주문</label>
+            <label class="rounded-2xl border border-neutral-200 p-4"><input type="checkbox" name="purpose" value="내부관리"> 내부관리</label>
+            <label class="rounded-2xl border border-neutral-200 p-4"><input type="checkbox" name="purpose" value="커뮤니티"> 커뮤니티</label>
+            <label class="rounded-2xl border border-neutral-200 p-4"><input type="checkbox" name="purpose" value="기타"> 기타</label>
+          </div>
+          <label class="mt-5 block"><span class="mb-2 block text-sm text-neutral-500">가장 중요한 목표 1가지</span><textarea name="mainGoal" rows="3" class="w-full rounded-2xl border border-neutral-200 px-4 py-3" placeholder="예: 홈페이지를 통해 문의가 들어오게 하고 싶습니다."></textarea></label>
+        </section>
+
+        <section class="rounded-3xl bg-white p-6 shadow-sm md:p-8">
+          <h2 class="mb-6 text-xl font-semibold">3. 필요한 기능</h2>
+          <label class="block"><span class="mb-2 block text-sm text-neutral-500">반드시 필요한 기능</span><textarea name="mustFeatures" rows="4" class="w-full rounded-2xl border border-neutral-200 px-4 py-3" placeholder="예: 관리자 페이지, 게시판, 유튜브 영상 노출, 문의 버튼"></textarea></label>
+          <label class="mt-5 block"><span class="mb-2 block text-sm text-neutral-500">있으면 좋은 기능</span><textarea name="niceFeatures" rows="3" class="w-full rounded-2xl border border-neutral-200 px-4 py-3"></textarea></label>
+          <label class="mt-5 block"><span class="mb-2 block text-sm text-neutral-500">향후 추가하고 싶은 기능</span><textarea name="futureFeatures" rows="3" class="w-full rounded-2xl border border-neutral-200 px-4 py-3"></textarea></label>
+        </section>
+
+        <section class="rounded-3xl bg-white p-6 shadow-sm md:p-8">
+          <h2 class="mb-6 text-xl font-semibold">4. 사용자와 디자인</h2>
+          <div class="grid gap-5 md:grid-cols-2">
+            <label class="block"><span class="mb-2 block text-sm text-neutral-500">주요 사용자</span><input name="users" class="w-full rounded-2xl border border-neutral-200 px-4 py-3" placeholder="예: 일반 방문자, 관리자, 직원"></label>
+            <label class="block"><span class="mb-2 block text-sm text-neutral-500">참고 사이트</span><input name="referenceSite" class="w-full rounded-2xl border border-neutral-200 px-4 py-3" placeholder="참고 링크가 있으면 입력"></label>
+          </div>
+          <label class="mt-5 block"><span class="mb-2 block text-sm text-neutral-500">원하는 디자인 느낌</span><input name="designStyle" class="w-full rounded-2xl border border-neutral-200 px-4 py-3" placeholder="예: 깔끔한, 고급스러운, 따뜻한, 기업형"></label>
+          <label class="mt-5 block"><span class="mb-2 block text-sm text-neutral-500">사용 흐름</span><textarea name="userFlow" rows="3" class="w-full rounded-2xl border border-neutral-200 px-4 py-3" placeholder="예: 접속 → 소개 확인 → 제작의뢰 → 카카오톡 문의"></textarea></label>
+        </section>
+
+        <section class="rounded-3xl bg-white p-6 shadow-sm md:p-8">
+          <h2 class="mb-6 text-xl font-semibold">5. 콘텐츠·관리·일정</h2>
+          <div class="grid gap-5 md:grid-cols-2">
+            <label class="block"><span class="mb-2 block text-sm text-neutral-500">콘텐츠 준비 상태</span><select name="contentsReady" class="w-full rounded-2xl border border-neutral-200 px-4 py-3"><option>준비 완료</option><option>일부 준비</option><option>아직 없음</option><option>임시 데이터로 먼저 제작 희망</option></select></label>
+            <label class="block"><span class="mb-2 block text-sm text-neutral-500">관리자 페이지 필요 여부</span><select name="adminNeed" class="w-full rounded-2xl border border-neutral-200 px-4 py-3"><option>필요</option><option>불필요</option><option>상담 필요</option></select></label>
+            <label class="block"><span class="mb-2 block text-sm text-neutral-500">희망 완료일</span><input name="deadline" class="w-full rounded-2xl border border-neutral-200 px-4 py-3" placeholder="예: 2026년 6월 말"></label>
+            <label class="block"><span class="mb-2 block text-sm text-neutral-500">예산 범위</span><select name="budget" class="w-full rounded-2xl border border-neutral-200 px-4 py-3"><option>협의</option><option>~50만원</option><option>50~100만원</option><option>100~300만원</option><option>300만원 이상</option></select></label>
+          </div>
+          <label class="mt-5 block"><span class="mb-2 block text-sm text-neutral-500">기타 요청사항</span><textarea name="etc" rows="4" class="w-full rounded-2xl border border-neutral-200 px-4 py-3"></textarea></label>
+        </section>
+
+        <div class="sticky bottom-4 rounded-3xl border border-neutral-100 bg-white/90 p-4 shadow-lg backdrop-blur md:flex md:items-center md:justify-between">
+          <p id="status" class="mb-3 text-sm text-neutral-500 md:mb-0">의뢰서를 작성한 뒤 발송 버튼을 눌러주세요.</p>
+          <button type="submit" class="w-full rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-neutral-700 md:w-auto">의뢰서 발송</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    const KAKAO_URL = 'https://open.kakao.com/o/skzHmYsi';
+    const form = document.getElementById('requestForm');
+    const status = document.getElementById('status');
+
+    function getCheckedValues(name) {
+      return [...form.querySelectorAll(`input[name="${name}"]:checked`)].map(el => el.value).join(', ') || '미입력';
+    }
+
+    function value(name) {
+      return form.elements[name]?.value?.trim() || '미입력';
+    }
+
+    function buildMessage() {
+      return `[웹사이트/웹앱 제작 의뢰서]\n\n` +
+        `1. 기본 정보\n` +
+        `- 업체명/프로젝트명: ${value('projectName')}\n` +
+        `- 담당자: ${value('managerName')}\n` +
+        `- 연락처: ${value('phone')}\n` +
+        `- 이메일: ${value('email')}\n\n` +
+        `2. 프로젝트 목적\n` +
+        `- 목적: ${getCheckedValues('purpose')}\n` +
+        `- 가장 중요한 목표: ${value('mainGoal')}\n\n` +
+        `3. 필요한 기능\n` +
+        `- 필수 기능: ${value('mustFeatures')}\n` +
+        `- 있으면 좋은 기능: ${value('niceFeatures')}\n` +
+        `- 향후 추가 기능: ${value('futureFeatures')}\n\n` +
+        `4. 사용자와 디자인\n` +
+        `- 주요 사용자: ${value('users')}\n` +
+        `- 참고 사이트: ${value('referenceSite')}\n` +
+        `- 디자인 느낌: ${value('designStyle')}\n` +
+        `- 사용 흐름: ${value('userFlow')}\n\n` +
+        `5. 콘텐츠·관리·일정\n` +
+        `- 콘텐츠 준비: ${value('contentsReady')}\n` +
+        `- 관리자 페이지: ${value('adminNeed')}\n` +
+        `- 희망 완료일: ${value('deadline')}\n` +
+        `- 예산: ${value('budget')}\n` +
+        `- 기타 요청사항: ${value('etc')}`;
+    }
+
+    async function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      const ok = document.execCommand('copy');
+      textarea.remove();
+      return ok;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const message = buildMessage();
+      try {
+        await copyText(message);
+        status.textContent = '의뢰서 내용이 복사되었습니다. 카카오톡 방에서 붙여넣기 후 전송해주세요.';
+      } catch (error) {
+        status.textContent = '자동 복사에 실패했습니다. 아래 내용을 직접 복사해주세요.';
+        alert(message);
+      }
+      window.open(KAKAO_URL, '_blank', 'noopener,noreferrer');
+    });
+  </script>
+</body>
+</html>
