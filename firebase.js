@@ -102,6 +102,7 @@ export function toProjectRecord(project) {
     year: String(project.year || "").trim(),
     description: String(project.description || "").trim(),
     image_url: String(project.image_url || project.image || "").trim(),
+    image_source: String(project.image_source || project.imageSource || "manual").trim() || "manual",
     image_alt: String(project.image_alt || project.alt || project.title || "").trim(),
     tags: Array.isArray(project.tags) ? project.tags.filter(Boolean) : [],
     github_url: String(project.github_url || project.githubUrl || "").trim(),

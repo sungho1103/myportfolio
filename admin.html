@@ -105,8 +105,51 @@
               <textarea id="description" name="description" rows="4" required class="w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-400" placeholder="프로젝트 설명을 입력하세요."></textarea>
             </div>
             <div>
-              <label for="image" class="mb-2 block text-sm text-neutral-300">이미지 URL</label>
-              <input id="image" name="image" required class="w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-400" placeholder="https://...">
+              <div class="mb-2 flex items-center justify-between gap-3">
+                <label class="block text-sm text-neutral-300">대표 이미지</label>
+                <p class="text-xs text-neutral-500">URL, 업로드, 웹사이트 첫 화면 중 선택</p>
+              </div>
+              <div class="grid gap-3">
+                <div class="grid gap-3 sm:grid-cols-3">
+                  <label class="flex items-center gap-3 rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 text-sm text-neutral-300">
+                    <input type="radio" name="imageMode" value="manual" checked class="h-4 w-4 border-white/20 bg-neutral-800 text-cyan-300">
+                    이미지 URL
+                  </label>
+                  <label class="flex items-center gap-3 rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 text-sm text-neutral-300">
+                    <input type="radio" name="imageMode" value="upload" class="h-4 w-4 border-white/20 bg-neutral-800 text-cyan-300">
+                    이미지 업로드
+                  </label>
+                  <label class="flex items-center gap-3 rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 text-sm text-neutral-300">
+                    <input type="radio" name="imageMode" value="website" class="h-4 w-4 border-white/20 bg-neutral-800 text-cyan-300">
+                    웹사이트 첫 화면
+                  </label>
+                </div>
+
+                <div id="image-manual-fields">
+                  <input id="image" name="image" class="w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-400" placeholder="https://...">
+                </div>
+
+                <div id="image-upload-fields" class="hidden">
+                  <input id="image-file" name="imageFile" type="file" accept="image/*" class="block w-full rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 text-sm text-neutral-300 file:mr-4 file:rounded-full file:border-0 file:bg-cyan-300 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-neutral-950 hover:file:bg-cyan-200">
+                  <p class="mt-2 text-xs text-neutral-500">작은 용량 이미지를 권장합니다. 업로드 이미지는 Firestore 문서에 함께 저장됩니다.</p>
+                </div>
+
+                <div id="image-website-fields" class="hidden rounded-2xl border border-white/10 bg-neutral-900 px-4 py-3 text-sm text-neutral-300">
+                  <p>서비스 URL을 기준으로 웹사이트 첫 화면 썸네일을 자동 생성합니다.</p>
+                  <p class="mt-2 text-xs text-neutral-500">저장할 때 `서비스 URL` 값이 필요합니다.</p>
+                </div>
+
+                <div class="overflow-hidden rounded-2xl border border-white/10 bg-neutral-900">
+                  <div class="flex items-center justify-between border-b border-white/10 px-4 py-3">
+                    <p class="text-sm text-neutral-300">이미지 미리보기</p>
+                    <span id="image-preview-label" class="text-xs text-neutral-500">선택 안 됨</span>
+                  </div>
+                  <div class="flex aspect-video items-center justify-center bg-neutral-950/60">
+                    <img id="image-preview" alt="프로젝트 이미지 미리보기" class="hidden h-full w-full object-cover">
+                    <p id="image-preview-empty" class="px-6 text-center text-sm text-neutral-500">이미지 URL을 넣거나 파일을 업로드하거나 웹사이트 첫 화면 모드를 선택하세요.</p>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="grid gap-4 sm:grid-cols-2">
               <div>

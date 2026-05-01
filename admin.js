@@ -26,11 +26,21 @@ const cancelEditButton = document.getElementById("cancel-edit");
 const passwordForm = document.getElementById("password-form");
 const seedProjectsButton = document.getElementById("seed-projects");
 const managementPanel = document.getElementById("management-panel");
+const imageModeInputs = Array.from(document.querySelectorAll('input[name="imageMode"]'));
+const imageField = document.getElementById("image");
+const imageFileField = document.getElementById("image-file");
+const manualImageFields = document.getElementById("image-manual-fields");
+const uploadImageFields = document.getElementById("image-upload-fields");
+const websiteImageFields = document.getElementById("image-website-fields");
+const imagePreview = document.getElementById("image-preview");
+const imagePreviewEmpty = document.getElementById("image-preview-empty");
+const imagePreviewLabel = document.getElementById("image-preview-label");
 
 let projects = [];
 let editingProjectId = null;
 let currentUser = null;
 let currentUserIsAdmin = false;
+let uploadedImageDataUrl = "";
 
 function slugify(value) {
   return value
@@ -78,17 +88,114 @@ function renderAuthState() {
   seedProjectsButton.disabled = !canManage;
 }
 
+function getImageMode() {
+  return imageModeInputs.find((input) => input.checked)?.value || "manual";
+}
+
+function generateWebsitePreviewUrl(url) {
+  return `https://s.wordpress.com/mshots/v1/${encodeURIComponent(url)}?w=1600`;
+}
+
+function setImagePreview(src, label) {
+  if (!src) {
+    imagePreview.removeAttribute("src");
+    imagePreview.classList.add("hidden");
+    imagePreviewEmpty.classList.remove("hidden");
+    imagePreviewLabel.textContent = label || "선택 안 됨";
+    return;
+  }
+
+  imagePreview.src = src;
+  imagePreview.classList.remove("hidden");
+  imagePreviewEmpty.classList.add("hidden");
+  imagePreviewLabel.textContent = label;
+}
+
+function updateImageModeUI() {
+  const mode = getImageMode();
+  manualImageFields.classList.toggle("hidden", mode !== "manual");
+  uploadImageFields.classList.toggle("hidden", mode !== "upload");
+  websiteImageFields.classList.toggle("hidden", mode !== "website");
+}
+
+function syncImagePreviewFromForm() {
+  const mode = getImageMode();
+  const liveUrl = String(form.liveUrl?.value || "").trim();
+
+  if (mode === "manual") {
+    setImagePreview(imageField.value.trim(), imageField.value.trim() ? "이미지 URL 미리보기" : "선택 안 됨");
+    return;
+  }
+
+  if (mode === "upload") {
+    setImagePreview(uploadedImageDataUrl, uploadedImageDataUrl ? "업로드 이미지 미리보기" : "선택 안 됨");
+    return;
+  }
+
+  if (!liveUrl) {
+    setImagePreview("", "서비스 URL 필요");
+    return;
+  }
+
+  setImagePreview(generateWebsitePreviewUrl(liveUrl), "웹사이트 첫 화면 미리보기");
+}
+
+function inferImageMode(project) {
+  if (project.image_source) return project.image_source;
+  if (project.image_url?.startsWith("data:image/")) return "upload";
+  if (project.live_url && project.image_url === generateWebsitePreviewUrl(project.live_url)) return "website";
+  return "manual";
+}
+
+function buildImagePayload(formData, title) {
+  const mode = getImageMode();
+  const liveUrl = String(formData.get("liveUrl") || "").trim();
+
+  if (mode === "upload") {
+    if (!uploadedImageDataUrl) {
+      throw new Error("업로드한 이미지를 먼저 선택하세요.");
+    }
+    return {
+      image_url: uploadedImageDataUrl,
+      image_source: "upload",
+      image_alt: String(formData.get("alt") || "").trim() || title
+    };
+  }
+
+  if (mode === "website") {
+    if (!liveUrl) {
+      throw new Error("웹사이트 첫 화면을 쓰려면 서비스 URL을 입력하세요.");
+    }
+    return {
+      image_url: generateWebsitePreviewUrl(liveUrl),
+      image_source: "website",
+      image_alt: String(formData.get("alt") || "").trim() || `${title} 웹사이트 첫 화면`
+    };
+  }
+
+  const imageUrl = String(formData.get("image") || "").trim();
+  if (!imageUrl) {
+    throw new Error("이미지 URL을 입력하세요.");
+  }
+
+  return {
+    image_url: imageUrl,
+    image_source: "manual",
+    image_alt: String(formData.get("alt") || "").trim() || title
+  };
+}
+
 function formToProject() {
   const formData = new FormData(form);
   const title = String(formData.get("title") || "").trim();
+  const imagePayload = buildImagePayload(formData, title);
 
   return {
     id: editingProjectId || slugify(title) || crypto.randomUUID(),
     title,
     year: String(formData.get("year") || "").trim(),
     description: String(formData.get("description") || "").trim(),
-    image_url: String(formData.get("image") || "").trim(),
-    image_alt: String(formData.get("alt") || "").trim() || title,
+    ...imagePayload,
     tags: String(formData.get("tags") || "")
       .split(",")
       .map((tag) => tag.trim())
@@ -104,9 +211,13 @@ function resetForm() {
   form.reset();
   form.published.checked = true;
   form.displayOrder.value = 0;
+  uploadedImageDataUrl = "";
+  imageModeInputs.find((input) => input.value === "manual").checked = true;
   editingProjectId = null;
   formMode.textContent = "새 프로젝트 추가";
   cancelEditButton.classList.add("hidden");
+  updateImageModeUI();
+  syncImagePreviewFromForm();
 }
 
 function editProject(projectId) {
@@ -120,13 +231,19 @@ function editProject(projectId) {
   form.alt.value = project.image_alt || "";
   form.description.value = project.description;
   form.image.value = project.image_url;
+  uploadedImageDataUrl = project.image_source === "upload" ? project.image_url : "";
   form.tags.value = project.tags.join(", ");
   form.githubUrl.value = project.github_url || "";
   form.liveUrl.value = project.live_url || "";
   form.displayOrder.value = project.display_order ?? 0;
   form.published.checked = Boolean(project.published);
+  const mode = inferImageMode(project);
+  const modeInput = imageModeInputs.find((input) => input.value === mode);
+  if (modeInput) modeInput.checked = true;
   formMode.textContent = `수정 중: ${project.title}`;
   cancelEditButton.classList.remove("hidden");
+  updateImageModeUI();
+  syncImagePreviewFromForm();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -329,6 +446,35 @@ seedProjectsButton.addEventListener("click", async () => {
 
   await loadProjects();
   window.alert("기본 프로젝트를 추가했습니다.");
+});
+
+imageModeInputs.forEach((input) => {
+  input.addEventListener("change", () => {
+    updateImageModeUI();
+    syncImagePreviewFromForm();
+  });
+});
+
+imageField.addEventListener("input", syncImagePreviewFromForm);
+form.liveUrl.addEventListener("input", syncImagePreviewFromForm);
+
+imageFileField.addEventListener("change", async () => {
+  const [file] = Array.from(imageFileField.files || []);
+  if (!file) {
+    uploadedImageDataUrl = "";
+    syncImagePreviewFromForm();
+    return;
+  }
+
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("이미지 파일을 읽지 못했습니다."));
+    reader.readAsDataURL(file);
+  });
+
+  uploadedImageDataUrl = dataUrl;
+  syncImagePreviewFromForm();
 });
 
 passwordForm.addEventListener("submit", async (event) => {
