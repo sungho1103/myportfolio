@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>포트폴리오 허브</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+    body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+  </style>
+</head>
+<body class="bg-white text-neutral-900">
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const defaultProjects = [
+      { id: 1, title: "E-Commerce Platform", year: "2025", description: "React와 Node.js를 사용한 풀스택 쇼핑몰 플랫폼. 결제 시스템 연동 및 실시간 재고 관리 기능 구현.", tags: ["React", "Node.js", "MongoDB", "Stripe"], image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80", github: "https://github.com", demo: "https://example.com" },
+      { id: 2, title: "Task Management App", year: "2024", description: "팀 협업을 위한 칸반 보드 기반 태스크 관리 애플리케이션. 실시간 동기화 및 알림 기능.", tags: ["Next.js", "TypeScript", "PostgreSQL", "WebSocket"], image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=800&q=80", github: "https://github.com", demo: "https://example.com" },
+      { id: 3, title: "Portfolio Generator", year: "2024", description: "개발자를 위한 포트폴리오 웹사이트 자동 생성 서비스. 마크다운 기반의 콘텐츠 관리.", tags: ["React", "Tailwind CSS", "Firebase"], image: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=80", github: "https://github.com", demo: "" },
+      { id: 4, title: "Weather Dashboard", year: "2023", description: "OpenWeather API를 활용한 날씨 대시보드. 위치 기반 예보 및 데이터 시각화.", tags: ["Vue.js", "Chart.js", "REST API"], image: "https://images.unsplash.com/photo-1504608524841-42584120d693?w=800&q=80", github: "", demo: "https://example.com" }
+    ];
+
+    const defaultInfo = {
+      name: "권성호", title: "WEB DEVELOPER",
+      description: "사용자 경험을 중시하는 웹 애플리케이션을 만듭니다.\n깔끔한 코드와 직관적인 인터페이스를 추구합니다.",
+      email: "contact@example.com", github: "https://github.com",
+      techStack: {
+        frontend: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
+        backend: ["Node.js", "Python", "PostgreSQL", "MongoDB"],
+        tools: ["Git", "Figma", "Docker", "AWS"]
+      }
+    };
+
+    function useStorage(key, defaultValue) {
+      const [value, setValue] = useState(() => {
+        try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : defaultValue; }
+        catch { return defaultValue; }
+      });
+      const setAndStore = (v) => { setValue(v); try { localStorage.setItem(key, JSON.stringify(v)); } catch {} };
+      return [value, setAndStore];
+    }
+
+    function GithubIcon({ size=16 }) {
+      return <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>;
+    }
+
+    function ExtLink({ size=16 }) {
+      return <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>;
+    }
+
+    function HomePage({ projects, info }) {
+      const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      return (
+        <div>
+          <section className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-24 relative">
+            <div className="max-w-3xl">
+              <p className="text-sm tracking-widest text-neutral-400 mb-4">{info.title}</p>
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-light text-neutral-900 leading-tight mb-6">
+                안녕하세요,<br/><span className="font-medium">{info.name}</span>입니다.
+              </h1>
+              <p className="text-lg md:text-xl text-neutral-500 font-light leading-relaxed max-w-xl mb-12" style={{whiteSpace:'pre-line'}}>{info.description}</p>
+              <div className="flex items-center gap-8">
+                <a href="#projects" onClick={e=>{e.preventDefault();scrollTo('projects');}} className="text-sm tracking-widest hover:text-neutral-500 transition-colors border-b border-neutral-900 pb-1">프로젝트 보기</a>
+                {info.github && <a href={info.github} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-neutral-900 transition-colors"><GithubIcon size={20}/></a>}
+              </div>
+            </div>
+            <button onClick={()=>scrollTo('projects')} className="absolute bottom-12 left-1/2 -translate-x-1/2 text-neutral-300 hover:text-neutral-900 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-bounce"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+            </button>
+          </section>
+
+          <section id="projects" className="py-24 px-6 md:px-12 lg:px-24">
+            <div className="mb-16">
+              <p className="text-sm tracking-widest text-neutral-400 mb-2">SELECTED WORK</p>
+              <h2 className="text-3xl md:text-4xl font-light text-neutral-900">프로젝트</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
+              {projects.map(project => (
+                <article key={project.id} className="group">
+                  <div className="aspect-[16/10] bg-neutral-100 overflow-hidden mb-6">
+                    {project.image && <img src={project.image} alt={project.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"/>}
+                  </div>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-xl font-medium text-neutral-900">{project.title}</h3>
+                        <span className="text-sm text-neutral-400">{project.year}</span>
+                      </div>
+                      <p className="text-neutral-500 font-light leading-relaxed mb-4">{project.description}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {project.tags.map((tag,i)=><span key={i} className="text-xs text-neutral-400 border border-neutral-200 px-2 py-1">{tag}</span>)}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2 flex-shrink-0">
+                      {project.github && <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-neutral-900 transition-colors"><GithubIcon/></a>}
+                      {project.demo && <a href={project.demo} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-neutral-900 transition-colors"><ExtLink/></a>}
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="py-24 px-6 md:px-12 lg:px-24 bg-neutral-50">
+            <div className="mb-16">
+              <p className="text-sm tracking-widest text-neutral-400 mb-2">TECH STACK</p>
+              <h2 className="text-3xl md:text-4xl font-light text-neutral-900">기술 스택</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              {[['FRONTEND','frontend'],['BACKEND','backend'],['TOOLS','tools']].map(([label,key])=>(
+                <div key={key}>
+                  <h3 className="text-sm tracking-widest text-neutral-400 mb-6">{label}</h3>
+                  <ul className="space-y-3">{info.techStack[key].map((t,i)=><li key={i} className="text-lg text-neutral-700 font-light">{t}</li>)}</ul>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="py-24 px-6 md:px-12 lg:px-24">
+            <div className="max-w-2xl">
+              <p className="text-sm tracking-widest text-neutral-400 mb-2">CONTACT</p>
+              <h2 className="text-3xl md:text-4xl font-light text-neutral-900 mb-8">함께 일해요</h2>
+              <p className="text-lg text-neutral-500 font-light leading-relaxed mb-12">새로운 프로젝트나 협업에 관심이 있으시다면 언제든지 연락 주세요.</p>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                {info.email && <a href={"mailto:"+info.email} className="text-lg font-light border-b border-neutral-900 pb-1 hover:text-neutral-500 transition-colors">{info.email}</a>}
+                {info.github && <a href={info.github} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-neutral-900 transition-colors"><GithubIcon size={24}/></a>}
+              </div>
+            </div>
+          </section>
+
+          <footer className="py-8 px-6 md:px-12 lg:px-24 border-t border-neutral-100">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-sm text-neutral-400">© 2026 All rights reserved.</p>
+              <a href="#/admin" className="text-sm text-neutral-400 hover:text-neutral-900 transition-colors">관리자</a>
+              <p className="text-sm text-neutral-400">Designed &amp; Developed with care.</p>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    function AdminAuth({ onAuth }) {
+      const [pw, setPw] = useState('');
+      const [err, setErr] = useState('');
+      const handle = (e) => {
+        e.preventDefault();
+        if (pw === 'admin1234') { onAuth(); setErr(''); }
+        else setErr('비밀번호가 올바르지 않습니다.');
+      };
+      return (
+        <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+          <div className="bg-white p-8 rounded-lg shadow-sm w-full max-w-md">
+            <div className="flex items-center gap-2 mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <h1 className="text-xl font-medium">관리자 인증</h1>
+            </div>
+            <form onSubmit={handle}>
+              <input type="password" placeholder="비밀번호를 입력하세요" value={pw} onChange={e=>setPw(e.target.value)}
+                className="w-full border border-neutral-200 rounded px-4 py-3 mb-4 focus:outline-none focus:border-neutral-400"/>
+              {err && <p className="text-red-500 text-sm mb-4">{err}</p>}
+              <button type="submit" className="w-full bg-neutral-900 text-white py-3 rounded font-medium hover:bg-neutral-700 transition-colors">확인</button>
+            </form>
+            <p className="text-xs text-neutral-400 mt-4 text-center">기본 비밀번호: admin1234</p>
+          </div>
+        </div>
+      );
+    }
+
+    function InfoEditForm({ info, onSave, onCancel }) {
+      const [form, setForm] = useState({...info});
+      const ch = (k,v) => setForm(p=>({...p,[k]:v}));
+      const chTech = (cat,i,v) => { const s={...form.techStack}; s[cat]=[...s[cat]]; s[cat][i]=v; setForm(p=>({...p,techStack:s})); };
+      const addT = (cat) => { const s={...form.techStack,[cat]:[...form.techStack[cat],'']}; setForm(p=>({...p,techStack:s})); };
+      const rmT = (cat,i) => { const s={...form.techStack}; s[cat]=form.techStack[cat].filter((_,j)=>j!==i); setForm(p=>({...p,techStack:s})); };
+      return (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[['이름','name'],['직함','title'],['이메일','email'],['GitHub URL','github']].map(([l,k])=>(
+              <div key={k}><label className="block text-sm text-neutral-500 mb-1">{l}</label>
+              <input type="text" value={form[k]||''} onChange={e=>ch(k,e.target.value)} className="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"/></div>
+            ))}
+          </div>
+          <div><label className="block text-sm text-neutral-500 mb-1">소개글</label>
+            <textarea value={form.description||''} onChange={e=>ch('description',e.target.value)} rows={3} className="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"/></div>
+          {['frontend','backend','tools'].map(cat=>(
+            <div key={cat}><label className="block text-sm text-neutral-500 mb-2 uppercase">{cat}</label>
+              <div className="flex flex-wrap gap-2">
+                {form.techStack[cat].map((t,i)=>(<div key={i} className="flex items-center gap-1">
+                  <input type="text" value={t} onChange={e=>chTech(cat,i,e.target.value)} className="border border-neutral-200 rounded px-2 py-1 text-sm w-28 focus:outline-none"/>
+                  <button onClick={()=>rmT(cat,i)} className="text-red-400 hover:text-red-600 text-lg leading-none">×</button>
+                </div>))}
+                <button onClick={()=>addT(cat)} className="text-sm text-neutral-400 border border-dashed border-neutral-300 px-2 py-1 rounded hover:border-neutral-400">+ 추가</button>
+              </div>
+            </div>
+          ))}
+          <div className="flex gap-3 pt-2">
+            <button onClick={()=>onSave(form)} className="bg-neutral-900 text-white px-6 py-2 rounded text-sm hover:bg-neutral-700 transition-colors">저장</button>
+            <button onClick={onCancel} className="border border-neutral-200 px-6 py-2 rounded text-sm hover:bg-neutral-50 transition-colors">취소</button>
+          </div>
+        </div>
+      );
+    }
+
+    function ProjectEditForm({ project, onSave, onCancel }) {
+      const [form, setForm] = useState({...project});
+      const [tagInput, setTagInput] = useState(project.tags ? project.tags.join(', ') : '');
+      const ch = (k,v) => setForm(p=>({...p,[k]:v}));
+      return (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label className="block text-sm text-neutral-500 mb-1">프로젝트명 *</label>
+              <input type="text" value={form.title||''} onChange={e=>ch('title',e.target.value)} className="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"/></div>
+            <div><label className="block text-sm text-neutral-500 mb-1">연도</label>
+              <input type="text" value={form.year||''} onChange={e=>ch('year',e.target.value)} className="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"/></div>
+          </div>
+          <div><label className="block text-sm text-neutral-500 mb-1">설명</label>
+            <textarea value={form.description||''} onChange={e=>ch('description',e.target.value)} rows={3} className="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"/></div>
+          <div><label className="block text-sm text-neutral-500 mb-1">태그 (쉼표로 구분)</label>
+            <input type="text" value={tagInput} onChange={e=>setTagInput(e.target.value)} placeholder="React, Node.js, MongoDB" className="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"/></div>
+          <div><label className="block text-sm text-neutral-500 mb-1">이미지 URL</label>
+            <input type="text" value={form.image||''} onChange={e=>ch('image',e.target.value)} className="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"/></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label className="block text-sm text-neutral-500 mb-1">GitHub URL</label>
+              <input type="text" value={form.github||''} onChange={e=>ch('github',e.target.value)} className="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"/></div>
+            <div><label className="block text-sm text-neutral-500 mb-1">데모 URL</label>
+              <input type="text" value={form.demo||''} onChange={e=>ch('demo',e.target.value)} className="w-full border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"/></div>
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button onClick={()=>onSave({...form,tags:tagInput.split(',').map(t=>t.trim()).filter(Boolean)})} className="bg-neutral-900 text-white px-6 py-2 rounded text-sm hover:bg-neutral-700 transition-colors">저장</button>
+            <button onClick={onCancel} className="border border-neutral-200 px-6 py-2 rounded text-sm hover:bg-neutral-50 transition-colors">취소</button>
+          </div>
+        </div>
+      );
+    }
+
+    function AdminDashboard({ projects, setProjects, info, setInfo, onBack }) {
+      const [editP, setEditP] = useState(null);
+      const [editInfo, setEditInfo] = useState(false);
+      const [newP, setNewP] = useState(false);
+      const delP = (id) => { if(confirm('정말 삭제하시겠습니까?')) setProjects(projects.filter(p=>p.id!==id)); };
+      const saveP = (p) => {
+        if(p.id) setProjects(projects.map(x=>x.id===p.id?p:x));
+        else setProjects([...projects,{...p,id:Date.now()}]);
+        setEditP(null); setNewP(false);
+      };
+      return (
+        <div className="min-h-screen bg-neutral-50">
+          <div className="bg-white border-b border-neutral-200 px-6 py-4 flex items-center justify-between">
+            <h1 className="text-xl font-medium">포트폴리오 관리자</h1>
+            <div className="flex gap-3">
+              <button onClick={onBack} className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors border border-neutral-200 px-4 py-2 rounded">← 포트폴리오로 이동</button>
+            </div>
+          </div>
+          <div className="max-w-5xl mx-auto px-6 py-12">
+            <section className="bg-white rounded-lg p-8 mb-8 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-medium">기본 정보</h2>
+                <button onClick={()=>setEditInfo(!editInfo)} className="text-sm bg-neutral-900 text-white px-4 py-2 rounded hover:bg-neutral-700 transition-colors">{editInfo?'취소':'수정'}</button>
+              </div>
+              {editInfo ? <InfoEditForm info={info} onSave={(ni)=>{setInfo(ni);setEditInfo(false);}} onCancel={()=>setEditInfo(false)}/> : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  {[['이름',info.name],['직함',info.title],['이메일',info.email],['GitHub',info.github]].map(([l,v])=>(
+                    <div key={l}><span className="text-neutral-400">{l}:</span><span className="ml-2">{v}</span></div>
+                  ))}
+                  <div className="md:col-span-2"><span className="text-neutral-400">소개:</span><span className="ml-2">{info.description}</span></div>
+                </div>
+              )}
+            </section>
+            <section className="bg-white rounded-lg p-8 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-medium">프로젝트 관리</h2>
+                <button onClick={()=>{setNewP(true);setEditP({id:null,title:'',year:new Date().getFullYear().toString(),description:'',tags:[],image:'',github:'',demo:''}); }} className="text-sm bg-neutral-900 text-white px-4 py-2 rounded hover:bg-neutral-700 transition-colors">+ 새 프로젝트</button>
+              </div>
+              {(newP || editP) && (
+                <div className="mb-6 p-6 border border-neutral-200 rounded-lg">
+                  <h3 className="font-medium mb-4">{newP?'새 프로젝트 추가':'프로젝트 수정'}</h3>
+                  <ProjectEditForm project={editP} onSave={saveP} onCancel={()=>{setEditP(null);setNewP(false);}}/>
+                </div>
+              )}
+              <div className="space-y-4">
+                {projects.map(p=>(
+                  <div key={p.id} className="flex items-center gap-4 p-4 border border-neutral-100 rounded-lg hover:border-neutral-200 transition-colors">
+                    {p.image && <img src={p.image} alt={p.title} className="w-16 h-12 object-cover rounded flex-shrink-0"/>}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium truncate">{p.title}</h3>
+                        <span className="text-xs text-neutral-400 flex-shrink-0">{p.year}</span>
+                      </div>
+                      <p className="text-sm text-neutral-500 truncate">{p.description}</p>
+                      <div className="flex flex-wrap gap-1 mt-1">{p.tags.map((t,i)=><span key={i} className="text-xs bg-neutral-100 px-2 py-0.5 rounded">{t}</span>)}</div>
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button onClick={()=>{setEditP({...p});setNewP(false);}} className="text-sm text-neutral-500 hover:text-neutral-900 border border-neutral-200 px-3 py-1.5 rounded transition-colors">수정</button>
+                      <button onClick={()=>delP(p.id)} className="text-sm text-red-400 hover:text-red-600 border border-red-100 px-3 py-1.5 rounded transition-colors">삭제</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [projects, setProjects] = useStorage('portfolio_projects', defaultProjects);
+      const [info, setInfo] = useStorage('portfolio_info', defaultInfo);
+      const [page, setPage] = useState('home');
+      const [adminAuthed, setAdminAuthed] = useState(false);
+
+      useEffect(() => {
+        const check = () => {
+          const h = window.location.hash;
+          setPage(h === '#/admin' || h === '#/Admin' ? 'admin' : 'home');
+        };
+        check();
+        window.addEventListener('hashchange', check);
+        return () => window.removeEventListener('hashchange', check);
+      }, []);
+
+      if (page === 'admin') {
+        if (!adminAuthed) return <AdminAuth onAuth={()=>setAdminAuthed(true)}/>;
+        return <AdminDashboard projects={projects} setProjects={setProjects} info={info} setInfo={setInfo}
+          onBack={()=>{ window.location.hash=''; setPage('home'); setAdminAuthed(false); }}/>;
+      }
+      return <HomePage projects={projects} info={info}/>;
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>
