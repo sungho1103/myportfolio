@@ -38,6 +38,7 @@ const imagePreviewLabel = document.getElementById("image-preview-label");
 const imagePreviewStrip = document.getElementById("image-preview-strip");
 const ADMIN_SESSION_KEY = "portfolio_admin_session_expires_at";
 const ADMIN_SESSION_DURATION_MS = 10 * 60 * 1000;
+const MAX_UPLOAD_IMAGE_BYTES = 1048576;
 
 let projects = [];
 let editingProjectId = null;
@@ -53,6 +54,85 @@ function slugify(value) {
     .trim()
     .replace(/[^a-z0-9가-힣]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function dataUrlByteSize(dataUrl) {
+  const [, payload = ""] = dataUrl.split(",");
+  const padding = payload.endsWith("==") ? 2 : payload.endsWith("=") ? 1 : 0;
+  return Math.floor((payload.length * 3) / 4) - padding;
+}
+
+function loadImageElement(file) {
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(image);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("이미지 파일을 읽지 못했습니다."));
+    };
+    image.src = objectUrl;
+  });
+}
+
+function canvasToBlob(canvas, type, quality) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new Error("이미지 압축에 실패했습니다."));
+        return;
+      }
+      resolve(blob);
+    }, type, quality);
+  });
+}
+
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("압축한 이미지를 읽지 못했습니다."));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function compressImageFile(file) {
+  const image = await loadImageElement(file);
+  const outputType = ["image/jpeg", "image/webp"].includes(file.type) ? file.type : "image/jpeg";
+  let scale = 1;
+  let quality = outputType === "image/jpeg" || outputType === "image/webp" ? 0.9 : undefined;
+
+  for (let attempt = 0; attempt < 12; attempt += 1) {
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("이미지 처리 컨텍스트를 만들지 못했습니다.");
+
+    if (outputType === "image/jpeg") {
+      context.fillStyle = "#ffffff";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const blob = await canvasToBlob(canvas, outputType, quality);
+    if (blob.size <= MAX_UPLOAD_IMAGE_BYTES) {
+      return blobToDataUrl(blob);
+    }
+
+    if (typeof quality === "number" && quality > 0.45) {
+      quality = Math.max(0.45, quality - 0.1);
+    } else {
+      scale *= 0.82;
+    }
+  }
+
+  throw new Error("이미지를 1MB 이하로 줄이지 못했습니다. 더 작은 이미지를 사용하세요.");
 }
 
 function setSetupNotice(message) {
@@ -580,12 +660,22 @@ imageFileField.addEventListener("change", async () => {
     window.alert("이미지는 최대 5장까지 업로드할 수 있습니다. 앞의 5장만 사용합니다.");
   }
 
-  uploadedImageDataUrls = await Promise.all(files.map((file) => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result || ""));
-    reader.onerror = () => reject(new Error("이미지 파일을 읽지 못했습니다."));
-    reader.readAsDataURL(file);
-  })));
+  try {
+    uploadedImageDataUrls = await Promise.all(files.map(async (file) => {
+      const compressed = await compressImageFile(file);
+      if (dataUrlByteSize(compressed) > MAX_UPLOAD_IMAGE_BYTES) {
+        throw new Error("압축 후에도 1MB를 초과하는 이미지가 있습니다.");
+      }
+      return compressed;
+    }));
+  } catch (error) {
+    uploadedImageDataUrls = [];
+    imageFileField.value = "";
+    window.alert(error.message || "이미지 압축에 실패했습니다.");
+    syncImagePreviewFromForm();
+    return;
+  }
+
   syncImagePreviewFromForm();
 });
 
