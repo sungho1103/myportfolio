@@ -78,9 +78,7 @@ const defaultProjects = [
   }
 ];
 
-const loadedConfig = await import("./firebase-config.js")
-  .then(() => window.FIREBASE_CONFIG ?? null)
-  .catch(() => null);
+const loadedConfig = window.FIREBASE_CONFIG ?? null;
 
 export const isFirebaseConfigured = Boolean(
   loadedConfig?.apiKey &&
@@ -121,13 +119,10 @@ export async function listPublishedProjects() {
   if (!db) return { data: getDefaultProjects(), fallback: true, error: null };
 
   try {
-    const projectsQuery = query(
-      collection(db, "projects"),
-      where("published", "==", true),
-      orderBy("display_order", "desc")
-    );
+    const projectsQuery = query(collection(db, "projects"), where("published", "==", true));
     const snapshot = await getDocs(projectsQuery);
-    return { data: mapSnapshot(snapshot), fallback: false, error: null };
+    const data = mapSnapshot(snapshot).sort((a, b) => (b.display_order ?? 0) - (a.display_order ?? 0));
+    return { data, fallback: false, error: null };
   } catch (error) {
     return { data: getDefaultProjects(), fallback: true, error };
   }

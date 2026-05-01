@@ -25,6 +25,7 @@ const formMode = document.getElementById("form-mode");
 const cancelEditButton = document.getElementById("cancel-edit");
 const passwordForm = document.getElementById("password-form");
 const seedProjectsButton = document.getElementById("seed-projects");
+const managementPanel = document.getElementById("management-panel");
 
 let projects = [];
 let editingProjectId = null;
@@ -59,20 +60,22 @@ function setEditorEnabled(enabled) {
 
 function renderAuthState() {
   const loggedIn = Boolean(currentUser);
+  const canManage = loggedIn && currentUserIsAdmin && isFirebaseConfigured;
 
   sessionPanel.classList.toggle("hidden", !loggedIn);
   logoutButton.classList.toggle("hidden", !loggedIn);
   loginForm.classList.toggle("hidden", loggedIn);
+  managementPanel.classList.toggle("hidden", !canManage);
   sessionEmail.textContent = currentUser?.email ?? "";
   authDescription.textContent = loggedIn
     ? "로그인된 관리자 세션으로 프로젝트를 수정할 수 있습니다."
     : "먼저 로그인한 뒤 프로젝트를 관리하세요.";
 
-  setEditorEnabled(loggedIn && currentUserIsAdmin && isFirebaseConfigured);
+  setEditorEnabled(canManage);
   passwordForm.querySelectorAll("input, button").forEach((element) => {
     element.disabled = !(loggedIn && isFirebaseConfigured);
   });
-  seedProjectsButton.disabled = !(loggedIn && currentUserIsAdmin && isFirebaseConfigured);
+  seedProjectsButton.disabled = !canManage;
 }
 
 function formToProject() {
