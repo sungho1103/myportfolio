@@ -35,12 +35,16 @@ const websiteImageFields = document.getElementById("image-website-fields");
 const imagePreview = document.getElementById("image-preview");
 const imagePreviewEmpty = document.getElementById("image-preview-empty");
 const imagePreviewLabel = document.getElementById("image-preview-label");
+const ADMIN_SESSION_KEY = "portfolio_admin_session_expires_at";
+const ADMIN_SESSION_DURATION_MS = 10 * 60 * 1000;
 
 let projects = [];
 let editingProjectId = null;
 let currentUser = null;
 let currentUserIsAdmin = false;
 let uploadedImageDataUrl = "";
+let adminSessionTimerId = 0;
+let sessionExpiredNotice = false;
 
 function slugify(value) {
   return value
@@ -58,6 +62,66 @@ function setSetupNotice(message) {
 function clearSetupNotice() {
   setupNotice.textContent = "";
   setupNotice.classList.add("hidden");
+}
+
+function getAdminSessionExpiry() {
+  return Number(window.localStorage.getItem(ADMIN_SESSION_KEY) || 0);
+}
+
+function setAdminSessionExpiry(expiresAt) {
+  window.localStorage.setItem(ADMIN_SESSION_KEY, String(expiresAt));
+}
+
+function clearAdminSessionExpiry() {
+  window.localStorage.removeItem(ADMIN_SESSION_KEY);
+}
+
+function isAdminSessionExpired() {
+  const expiresAt = getAdminSessionExpiry();
+  return !expiresAt || Date.now() >= expiresAt;
+}
+
+function clearAdminSessionTimer() {
+  if (!adminSessionTimerId) return;
+  window.clearTimeout(adminSessionTimerId);
+  adminSessionTimerId = 0;
+}
+
+async function expireAdminSession() {
+  clearAdminSessionTimer();
+  clearAdminSessionExpiry();
+  sessionExpiredNotice = true;
+
+  if (!currentUser) {
+    renderAuthState();
+    setSetupNotice("관리자 로그인 유지 시간이 10분 지나 자동 로그아웃되었습니다.");
+    return;
+  }
+
+  try {
+    await signOut();
+  } catch (error) {
+    setSetupNotice(error.message || "세션 만료 후 자동 로그아웃에 실패했습니다.");
+  }
+}
+
+function scheduleAdminSessionTimer() {
+  clearAdminSessionTimer();
+  const remainingMs = getAdminSessionExpiry() - Date.now();
+  if (remainingMs <= 0) {
+    void expireAdminSession();
+    return;
+  }
+
+  adminSessionTimerId = window.setTimeout(() => {
+    void expireAdminSession();
+  }, remainingMs);
+}
+
+function extendAdminSession() {
+  sessionExpiredNotice = false;
+  setAdminSessionExpiry(Date.now() + ADMIN_SESSION_DURATION_MS);
+  scheduleAdminSessionTimer();
 }
 
 function setEditorEnabled(enabled) {
@@ -343,10 +407,21 @@ async function bootstrap() {
 
   clearSetupNotice();
   const { user } = await getCurrentUser();
-  currentUser = user;
-  currentUserIsAdmin = user ? await isAdminUser(user.uid) : false;
+  if (user && isAdminSessionExpired()) {
+    sessionExpiredNotice = true;
+    await signOut().catch(() => {});
+  }
+
+  const refreshedUser = (await getCurrentUser()).user;
+  currentUser = refreshedUser;
+  currentUserIsAdmin = refreshedUser ? await isAdminUser(refreshedUser.uid) : false;
+  if (currentUserIsAdmin) {
+    extendAdminSession();
+  }
   if (currentUser && !currentUserIsAdmin) {
     setSetupNotice("로그인은 되었지만 관리자 권한이 없습니다. Firestore의 `adminUsers/{uid}` 문서를 먼저 만들어야 합니다.");
+  } else if (!currentUser && sessionExpiredNotice) {
+    setSetupNotice("관리자 로그인 유지 시간이 10분 지나 자동 로그아웃되었습니다.");
   }
   renderAuthState();
 
@@ -377,6 +452,7 @@ loginForm.addEventListener("submit", async (event) => {
   const { user } = await getCurrentUser();
   currentUser = user;
   currentUserIsAdmin = user ? await isAdminUser(user.uid) : false;
+  if (currentUserIsAdmin) extendAdminSession();
   if (!currentUserIsAdmin) {
     setSetupNotice("로그인은 되었지만 관리자 권한이 없습니다. Firestore의 `adminUsers/{uid}` 문서를 먼저 만들어야 합니다.");
   } else {
@@ -396,6 +472,8 @@ logoutButton.addEventListener("click", async () => {
 
   currentUser = null;
   currentUserIsAdmin = false;
+  clearAdminSessionTimer();
+  clearAdminSessionExpiry();
   projects = [];
   resetForm();
   renderAuthState();
@@ -510,6 +588,11 @@ passwordForm.addEventListener("submit", async (event) => {
 onAuthChange(async (session) => {
   currentUser = session?.user ?? null;
   currentUserIsAdmin = currentUser ? await isAdminUser(currentUser.uid) : false;
+  if (!currentUser) {
+    clearAdminSessionTimer();
+  } else if (currentUserIsAdmin) {
+    extendAdminSession();
+  }
   renderAuthState();
   if (currentUserIsAdmin) {
     clearSetupNotice();
@@ -518,6 +601,8 @@ onAuthChange(async (session) => {
     setSetupNotice("로그인은 되었지만 관리자 권한이 없습니다. Firestore의 `adminUsers/{uid}` 문서를 먼저 만들어야 합니다.");
     projects = [];
     renderProjectList();
+  } else if (sessionExpiredNotice) {
+    setSetupNotice("관리자 로그인 유지 시간이 10분 지나 자동 로그아웃되었습니다.");
   }
 });
 
