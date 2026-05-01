@@ -16,6 +16,10 @@ const projectList = document.getElementById("project-list");
 const projectStatus = document.getElementById("project-status");
 const connectionBadge = document.getElementById("connection-badge");
 
+function getProjectPrimaryUrl(project) {
+  return project.live_url || project.github_url || "";
+}
+
 function renderProjectActions(project) {
   const links = [];
 
@@ -40,9 +44,14 @@ function renderProjectActions(project) {
 
 function renderProjectCard(project) {
   const tags = project.tags.map((tag) => `<span class="border border-neutral-200 px-2 py-1 text-xs text-neutral-400">${tag}</span>`).join("");
+  const popupUrl = getProjectPrimaryUrl(project);
+  const clickableClass = popupUrl
+    ? "cursor-pointer transition-transform duration-300 hover:-translate-y-1"
+    : "";
+  const popupAttr = popupUrl ? `data-popup-url="${popupUrl}"` : "";
 
   return `
-    <article class="group fade-in">
+    <article class="group fade-in ${clickableClass}" ${popupAttr}>
       <div class="mb-6 rounded-[1.75rem] border border-neutral-200 bg-neutral-100 p-3 shadow-[0_20px_50px_-30px_rgba(15,23,42,0.35)]">
         <div class="aspect-video overflow-hidden rounded-[1.1rem] bg-[linear-gradient(135deg,#f5f5f5_0%,#e5e5e5_100%)] ring-1 ring-black/5">
           <img src="${project.image_url}" alt="${project.image_alt}" class="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0">
@@ -82,6 +91,26 @@ function updateConnectionBadge(fallback) {
   connectionBadge.textContent = "Firebase 연결됨";
 }
 
+function openProjectPopup(url) {
+  if (!url) return;
+
+  const width = 1440;
+  const height = 900;
+  const left = Math.max(0, Math.round((window.screen.width - width) / 2));
+  const top = Math.max(0, Math.round((window.screen.height - height) / 2));
+  const features = [
+    `width=${width}`,
+    `height=${height}`,
+    `left=${left}`,
+    `top=${top}`,
+    "popup=yes",
+    "resizable=yes",
+    "scrollbars=yes"
+  ].join(",");
+
+  window.open(url, "_blank", features);
+}
+
 async function renderProjects() {
   const { data, fallback, error } = await listPublishedProjects();
   updateConnectionBadge(fallback);
@@ -106,5 +135,14 @@ async function renderProjects() {
   projectList.innerHTML = data.map(renderProjectCard).join("");
   observeFadeIns();
 }
+
+projectList.addEventListener("click", (event) => {
+  if (event.target.closest("a")) return;
+
+  const card = event.target.closest("[data-popup-url]");
+  if (!card) return;
+
+  openProjectPopup(card.dataset.popupUrl || "");
+});
 
 renderProjects();
