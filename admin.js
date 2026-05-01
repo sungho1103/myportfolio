@@ -336,7 +336,9 @@ function renderProjectCard(project) {
     <article class="rounded-3xl border border-white/10 bg-neutral-900/80 p-5">
       <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div class="flex flex-1 gap-4">
-          <img src="${project.image_url}" alt="${project.image_alt}" class="h-24 w-36 rounded-2xl object-cover">
+          <div class="h-24 w-36 overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(135deg,rgba(245,245,245,0.96)_0%,rgba(212,212,212,0.92)_100%)] p-2 shadow-inner shadow-black/10">
+            <img src="${project.image_url}" alt="${project.image_alt}" class="h-full w-full rounded-xl object-cover ring-1 ring-black/5">
+          </div>
           <div class="min-w-0 flex-1">
             <div class="flex flex-wrap items-center gap-2">
               <h3 class="text-lg font-semibold text-white">${project.title}</h3>

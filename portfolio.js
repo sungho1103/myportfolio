@@ -43,8 +43,10 @@ function renderProjectCard(project) {
 
   return `
     <article class="group fade-in">
-      <div class="mb-6 aspect-video overflow-hidden bg-neutral-100">
-        <img src="${project.image_url}" alt="${project.image_alt}" class="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0">
+      <div class="mb-6 rounded-[1.75rem] border border-neutral-200 bg-neutral-100 p-3 shadow-[0_20px_50px_-30px_rgba(15,23,42,0.35)]">
+        <div class="aspect-video overflow-hidden rounded-[1.1rem] bg-[linear-gradient(135deg,#f5f5f5_0%,#e5e5e5_100%)] ring-1 ring-black/5">
+          <img src="${project.image_url}" alt="${project.image_alt}" class="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0">
+        </div>
       </div>
       <div class="flex items-start justify-between gap-4">
         <div class="flex-1">
