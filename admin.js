@@ -439,8 +439,45 @@ async function deleteProject(projectId) {
   await loadProjects();
 }
 
+async function persistProjectOrder(items) {
+  if (!currentUser || !currentUserIsAdmin) return;
+
+  const reordered = items.map((project, index, array) => ({
+    ...project,
+    display_order: (array.length - index) * 10
+  }));
+
+  try {
+    for (const project of reordered) {
+      await upsertProject(project, currentUser.uid);
+    }
+  } catch (error) {
+    window.alert(error.message || "프로젝트 순서 저장에 실패했습니다.");
+    return;
+  }
+
+  projects = reordered;
+  renderProjectList();
+}
+
+async function moveProject(projectId, direction) {
+  const index = projects.findIndex((item) => item.id === projectId);
+  if (index === -1) return;
+
+  const targetIndex = direction === "up" ? index - 1 : index + 1;
+  if (targetIndex < 0 || targetIndex >= projects.length) return;
+
+  const reordered = [...projects];
+  const [moved] = reordered.splice(index, 1);
+  reordered.splice(targetIndex, 0, moved);
+  await persistProjectOrder(reordered);
+}
+
 function renderProjectCard(project) {
   const tags = project.tags.map((tag) => `<span class="rounded-full border border-white/10 px-2 py-1 text-xs text-neutral-300">${tag}</span>`).join("");
+  const currentIndex = projects.findIndex((item) => item.id === project.id);
+  const canMoveUp = currentIndex > 0;
+  const canMoveDown = currentIndex > -1 && currentIndex < projects.length - 1;
 
   return `
     <article class="rounded-3xl border border-white/10 bg-neutral-900/80 p-5">
@@ -462,6 +499,20 @@ function renderProjectCard(project) {
           </div>
         </div>
         <div class="flex gap-2">
+          <button
+            type="button"
+            data-action="move-up"
+            data-id="${project.id}"
+            class="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-neutral-200 transition hover:border-white hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-35"
+            ${canMoveUp ? "" : "disabled"}
+          >위로</button>
+          <button
+            type="button"
+            data-action="move-down"
+            data-id="${project.id}"
+            class="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-neutral-200 transition hover:border-white hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-35"
+            ${canMoveDown ? "" : "disabled"}
+          >아래로</button>
           <button type="button" data-action="edit" data-id="${project.id}" class="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-200 transition hover:border-cyan-300 hover:bg-cyan-400/20">수정</button>
           <button type="button" data-action="delete" data-id="${project.id}" class="rounded-full border border-rose-500/30 bg-rose-500/10 px-4 py-2 text-sm text-rose-200 transition hover:border-rose-400 hover:bg-rose-500/20">삭제</button>
         </div>
@@ -613,6 +664,8 @@ projectList.addEventListener("click", async (event) => {
   if (!target) return;
 
   const { action, id } = target.dataset;
+  if (action === "move-up") await moveProject(id, "up");
+  if (action === "move-down") await moveProject(id, "down");
   if (action === "edit") editProject(id);
   if (action === "delete") await deleteProject(id);
 });
